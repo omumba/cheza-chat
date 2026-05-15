@@ -11,8 +11,11 @@ import com.chezachat.ChezaApp
 import com.chezachat.R
 import com.chezachat.data.api.RetrofitClient
 import com.chezachat.databinding.ActivityProfileBinding
+import androidx.core.content.FileProvider
 import com.chezachat.ui.auth.AuthActivity
 import com.chezachat.ui.chat.ImageViewerActivity
+import com.yalantis.ucrop.UCrop
+import java.io.File
 import com.chezachat.utils.*
 
 class ProfileActivity : AppCompatActivity() {
@@ -23,7 +26,33 @@ class ProfileActivity : AppCompatActivity() {
 
     private val pickAvatarLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
-    ) { uri: Uri? -> uri?.let { viewModel.updateAvatar(it) } }
+    ) { uri: Uri? -> uri?.let { launchAvatarCrop(it) } }
+
+    private val avatarCropLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK && result.data != null) {
+            UCrop.getOutput(result.data!!)?.let { viewModel.updateAvatar(it) }
+        }
+    }
+
+    private fun launchAvatarCrop(sourceUri: Uri) {
+        val outFile = File(cacheDir, "avatar_${System.currentTimeMillis()}.jpg")
+        val destUri = FileProvider.getUriForFile(this, "$packageName.fileprovider", outFile)
+        val intent = UCrop.of(sourceUri, destUri)
+            .withAspectRatio(1f, 1f)
+            .withMaxResultSize(512, 512)
+            .withOptions(UCrop.Options().apply {
+                setCircleDimmedLayer(true)
+                setCompressionQuality(90)
+                setToolbarColor(getColor(R.color.primary))
+                setStatusBarColor(getColor(R.color.primary_dark))
+                setActiveControlsWidgetColor(getColor(R.color.primary))
+                setToolbarTitle("Crop profile photo")
+            })
+            .getIntent(this)
+        avatarCropLauncher.launch(intent)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

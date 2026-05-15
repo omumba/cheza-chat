@@ -25,12 +25,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.core.content.FileProvider
 import com.chezachat.R
 import com.chezachat.data.api.RetrofitClient
 import com.chezachat.databinding.ActivityChatBinding
 import com.chezachat.model.Conversation
 import com.chezachat.model.Message
 import com.chezachat.utils.*
+import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,6 +41,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.InputStream
 
 class ChatActivity : AppCompatActivity() {
@@ -62,7 +65,19 @@ class ChatActivity : AppCompatActivity() {
     // ── File pickers ──────────────────────────────────────────────────────────
     private val pickImageLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
-    ) { uri: Uri? -> uri?.let { showImagePreview(it) } }
+    ) { uri: Uri? -> uri?.let { launchCrop(it) } }
+
+    private val cropLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK && result.data != null) {
+            UCrop.getOutput(result.data!!)?.let { croppedUri ->
+                showImagePreview(croppedUri)
+            }
+        } else if (result.resultCode == UCrop.RESULT_ERROR) {
+            toast("Crop cancelled")
+        }
+    }
 
     private val pickVideoLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
@@ -274,21 +289,39 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    // ── Image preview ─────────────────────────────────────────────────────────
+    // ── Crop then preview ─────────────────────────────────────────────────────
+    private fun launchCrop(sourceUri: Uri) {
+        val outFile = File(cacheDir, "crop_${System.currentTimeMillis()}.jpg")
+        val destUri = FileProvider.getUriForFile(this, "$packageName.fileprovider", outFile)
+        val intent = UCrop.of(sourceUri, destUri)
+            .withMaxResultSize(1280, 1280)
+            .withOptions(UCrop.Options().apply {
+                setFreeStyleCropEnabled(true)
+                setCompressionQuality(88)
+                setToolbarColor(getColor(R.color.primary))
+                setStatusBarColor(getColor(R.color.primary_dark))
+                setActiveControlsWidgetColor(getColor(R.color.primary))
+                setToolbarTitle("Crop image")
+            })
+            .getIntent(this)
+        cropLauncher.launch(intent)
+    }
+
     private fun showImagePreview(uri: Uri) {
         val imageView = android.widget.ImageView(this).apply {
             layoutParams = android.view.ViewGroup.LayoutParams(
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT, 600
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT, 640
             )
             scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
-            setPadding(8, 8, 8, 8)
+            setPadding(4, 4, 4, 4)
         }
         com.bumptech.glide.Glide.with(this).load(uri).centerCrop().into(imageView)
         AlertDialog.Builder(this)
             .setTitle("Send image?")
             .setView(imageView)
             .setPositiveButton("Send") { _, _ -> uploadAndSend(uri, "image") }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton("Re-crop") { _, _ -> launchCrop(uri) }
+            .setNeutralButton("Cancel", null)
             .show()
     }
 

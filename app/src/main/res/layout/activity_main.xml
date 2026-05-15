@@ -113,7 +113,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/bg_primary"
-            app:menu="@menu/bottom_nav_menu" />
+            app:menu="@menu/bottom_nav_menu"
+            app:itemIconTint="@color/bottom_nav_tint"
+            app:itemTextColor="@color/bottom_nav_tint" />
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
