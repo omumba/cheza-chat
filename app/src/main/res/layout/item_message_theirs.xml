@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="2dp"
+    android:paddingEnd="64dp"
+    android:gravity="start">
+
+    <!-- Avatar — invisible (not gone) for consecutive messages to keep indent -->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/ivAvatar"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="4dp"
+        android:src="@drawable/ic_default_avatar" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Sender name — shown only for group chats first message in cluster -->
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="@color/primary"
+            android:textStyle="bold"
+            android:layout_marginBottom="2dp"
+            android:visibility="gone" />
+
+        <!-- Reply preview -->
+        <LinearLayout
+            android:id="@+id/replyContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_reply_theirs"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="6dp"
+            android:layout_marginBottom="2dp"
+            android:visibility="gone">
+            <View
+                android:layout_width="3dp"
+                android:layout_height="match_parent"
+                android:background="@color/primary"
+                android:layout_marginEnd="8dp" />
+            <TextView
+                android:id="@+id/tvReplyText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/primary"
+                android:maxLines="2"
+                android:ellipsize="end" />
+        </LinearLayout>
+
+        <!-- FIX: time inside bubble at bottom-start -->
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_bubble_theirs">
+
+            <TextView
+                android:id="@+id/tvContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="12dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="24dp"
+                android:textSize="15sp"
+                android:textColor="@color/text_on_bubble_theirs"
+                android:lineSpacingExtra="2dp"
+                android:minWidth="60dp"
+                android:maxWidth="240dp" />
+
+            <!-- Time pinned bottom-start inside bubble -->
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="5dp"
+                android:textSize="11sp"
+                android:textColor="@color/text_tertiary" />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,26 @@
+# /etc/systemd/system/cheza-ws.service
+# Enable: sudo systemctl enable cheza-ws
+# Start:  sudo systemctl start cheza-ws
+
+[Unit]
+Description=Cheza Chat WebSocket Server (Ratchet)
+After=network.target mysql.service
+Wants=mysql.service
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/cheza_chat/backend
+ExecStart=/usr/bin/php websocket/server.php
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=cheza-ws
+
+# Environment variables
+Environment="FCM_SERVER_KEY=your_fcm_server_key_here"
+Environment="JWT_SECRET=your_64_char_secret_here"
+
+[Install]
+WantedBy=multi-user.target

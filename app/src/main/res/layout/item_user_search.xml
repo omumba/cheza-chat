@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Redesigned: tapping anywhere opens UserProfileActivity.
+    The row shows friend status icon so user knows relationship before tapping.
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="10dp">
+
+    <!-- Avatar with online dot overlay -->
+    <FrameLayout
+        android:layout_width="46dp"
+        android:layout_height="46dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:src="@drawable/ic_default_avatar" />
+
+        <View
+            android:id="@+id/onlineDot"
+            android:layout_width="11dp"
+            android:layout_height="11dp"
+            android:layout_gravity="bottom|end"
+            android:background="@drawable/bg_online_dot_bordered"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <!-- Name + status -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="12dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <!-- Relationship badge: stranger / pending / friend -->
+    <TextView
+        android:id="@+id/tvFriendBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_badge_outlined"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="4dp"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:text="Add"
+        android:textColor="@color/primary" />
+
+</LinearLayout>

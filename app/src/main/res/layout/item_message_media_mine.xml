@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="end"
+    android:paddingVertical="2dp"
+    android:paddingStart="60dp">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bubble_mine"
+        android:minWidth="160dp">
+
+        <LinearLayout
+            android:id="@+id/mediaRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="28dp">
+
+            <ImageView
+                android:id="@+id/ivMediaIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:tint="@color/primary_text_on"
+                android:src="@drawable/ic_attach" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="10dp"
+                android:maxWidth="180dp">
+
+                <TextView
+                    android:id="@+id/tvFileName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_on_bubble_mine"
+                    android:textStyle="bold"
+                    android:maxLines="2"
+                    android:ellipsize="middle" />
+
+                <TextView
+                    android:id="@+id/tvFileSize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11sp"
+                    android:textColor="@color/text_on_bubble_mine"
+                    android:alpha="0.7"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Time + tick inside bubble bottom-right -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="5dp">
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                android:textColor="@color/text_tertiary" />
+
+            <ImageView
+                android:id="@+id/ivTick"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_tick_sending"
+                android:layout_marginStart="3dp" />
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>
