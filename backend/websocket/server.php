@@ -95,6 +95,7 @@ class ChezaChatServer implements MessageComponentInterface {
         $msgType   = in_array($data['message_type'] ?? 'text', ['text','image','audio','video','file'])
                       ? $data['message_type'] : 'text';
         $mediaUrl  = $data['media_url']  ?? null;
+        $mediaSize = isset($data['media_size']) ? (int)$data['media_size'] : null;
         $replyToId = isset($data['reply_to_id']) ? (int)$data['reply_to_id'] : null;
 
         if (!$convId || (empty($content) && !$mediaUrl)) return;
@@ -108,10 +109,10 @@ class ChezaChatServer implements MessageComponentInterface {
 
         // Persist to DB
         $stmt = $db->prepare("
-            INSERT INTO messages (conversation_id, sender_id, content, type, media_url, reply_to_id, status, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, 'sent', ?)
+            INSERT INTO messages (conversation_id, sender_id, content, type, media_url, media_size, reply_to_id, status, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'sent', ?)
         ");
-        $stmt->execute([$convId, $senderId, $content, $msgType, $mediaUrl, $replyToId, $createdAt]);
+        $stmt->execute([$convId, $senderId, $content, $msgType, $mediaUrl, $mediaSize, $replyToId, $createdAt]);
         $msgId = (int)$db->lastInsertId();
 
         // Fetch sender info
@@ -138,6 +139,7 @@ class ChezaChatServer implements MessageComponentInterface {
                 'content'         => $content,
                 'type'            => $msgType,
                 'media_url'       => $mediaUrl,
+                'media_size'      => $mediaSize,
                 'reply_to_id'     => $replyToId,
                 'reply_preview'   => $replyPreview,
                 'status'          => 'sent',

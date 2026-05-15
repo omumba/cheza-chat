@@ -8,7 +8,7 @@
     android:paddingEnd="60dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/ivAvatarSender"
+        android:id="@+id/ivAvatar"
         android:layout_width="28dp"
         android:layout_height="28dp"
         android:layout_marginEnd="8dp"
