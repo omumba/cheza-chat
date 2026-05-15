@@ -50,9 +50,9 @@ $friendsStmt = $db->prepare("
     FROM statuses s
     JOIN users u ON u.id = s.user_id
     JOIN (
-        SELECT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END AS friend_id
-        FROM friendships
-        WHERE (sender_id = ? OR receiver_id = ?) AND status = 'accepted'
+        SELECT CASE WHEN user_one = ? THEN user_two ELSE user_one END AS friend_id
+        FROM friends
+        WHERE user_one = ? OR user_two = ?
     ) f ON f.friend_id = s.user_id
     WHERE s.expires_at > ?
     ORDER BY s.user_id, s.created_at ASC

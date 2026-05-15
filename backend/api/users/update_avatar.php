@@ -7,7 +7,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonError('Method not allowed', 405);
 $auth = requireAuth();
 $myId = (int)$auth['sub'];
 
-$upload = handleUpload('avatar', 'image');
+$field  = !empty($_FILES['avatar']) ? 'avatar' : 'image';
+$upload = handleUpload($field, 'image');
 
 $db = getDB();
 $db->prepare('UPDATE users SET avatar_url = ? WHERE id = ?')

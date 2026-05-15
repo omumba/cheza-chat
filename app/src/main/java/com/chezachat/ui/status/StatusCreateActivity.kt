@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -63,7 +64,7 @@ class StatusCreateActivity : AppCompatActivity() {
         setupTabs()
 
         // Tap image area to pick
-        val imageContainer = findViewById<FrameLayout?>(R.id.imageStatusContainer)
+        val imageContainer = findViewById<LinearLayout?>(R.id.imageStatusContainer)
         imageContainer?.setOnClickListener { pickImageLauncher.launch("image/*") }
         findViewById<View?>(R.id.pickImageHint)?.setOnClickListener { pickImageLauncher.launch("image/*") }
 
