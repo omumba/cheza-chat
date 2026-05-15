@@ -56,13 +56,15 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             try {
                 val response = RetrofitClient.api.updateAvatar(part)
                 if (response.isSuccessful && response.body()?.success == true) {
-                    // Refresh profile from server to get updated avatar_url
                     val profileResp = RetrofitClient.api.getProfile()
                     if (profileResp.isSuccessful && profileResp.body()?.success == true) {
                         _updateResult.value = profileResp.body()?.data
                     }
                 } else {
-                    _error.value = "Failed to upload avatar"
+                    val msg = response.body()?.message
+                        ?: runCatching { response.errorBody()?.string() }.getOrNull()
+                        ?: "Upload failed (${response.code()})"
+                    _error.value = msg
                 }
             } catch (e: Exception) {
                 _error.value = e.message ?: "Network error"

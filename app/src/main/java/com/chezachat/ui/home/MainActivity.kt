@@ -23,6 +23,9 @@ import com.chezachat.ui.friends.FriendsActivity
 import com.chezachat.ui.people.UserProfileActivity
 import com.chezachat.ui.profile.ProfileActivity
 import com.chezachat.ui.settings.ChatSettingsActivity
+import com.chezachat.ui.status.StatusCircleAdapter
+import com.chezachat.ui.status.StatusCreateActivity
+import com.chezachat.ui.status.StatusViewerActivity
 import com.chezachat.utils.*
 import kotlinx.coroutines.launch
 
@@ -31,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var conversationAdapter: ConversationAdapter
     private lateinit var userSearchAdapter: UserSearchAdapter
+    private lateinit var statusAdapter: StatusCircleAdapter
     private val viewModel: HomeViewModel by viewModels()
     private val session by lazy { ChezaApp.instance.sessionManager }
 
@@ -56,11 +60,13 @@ class MainActivity : AppCompatActivity() {
         ChezaWebSocketManager.connect()
 
         setupConversationList()
+        setupStatusRow()
         setupSearch()
         setupFab()
         setupBottomNav()
         observeViewModel()
         observeWsState()
+        loadStatuses()
     }
 
     override fun onResume() {
@@ -69,11 +75,51 @@ class MainActivity : AppCompatActivity() {
         // Subsequent resumes (returning from another screen) do refresh.
         if (isFirstResume) { isFirstResume = false; return }
         viewModel.refreshFriendData()
+        loadStatuses()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         ChezaWebSocketManager.disconnect()
+    }
+
+    private fun setupStatusRow() {
+        statusAdapter = StatusCircleAdapter(
+            onMyCircleClick = {
+                startActivity(Intent(this, StatusCreateActivity::class.java))
+            },
+            onFriendClick = { userStatuses ->
+                StatusViewerActivity.start(this, userStatuses)
+            }
+        )
+        binding.rvStatuses.apply {
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(
+                this@MainActivity, androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false
+            )
+            adapter = statusAdapter
+        }
+    }
+
+    private fun loadStatuses() {
+        lifecycleScope.launch {
+            runCatching {
+                val resp = RetrofitClient.api.getStatuses()
+                if (resp.isSuccessful && resp.body()?.success == true) {
+                    val updates = resp.body()!!.updates
+                    val mine    = updates.firstOrNull { it.isMine }
+                    val friends = updates.filter { !it.isMine }
+                    statusAdapter.submit(mine, friends)
+                    binding.rvStatuses.show()
+                } else {
+                    // Always show "my status" button even if no statuses
+                    statusAdapter.submit(null, emptyList())
+                    binding.rvStatuses.show()
+                }
+            }.onFailure {
+                statusAdapter.submit(null, emptyList())
+                binding.rvStatuses.show()
+            }
+        }
     }
 
     private fun setupConversationList() {

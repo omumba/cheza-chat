@@ -255,6 +255,37 @@ data class ResetPasswordRequest(
     @SerializedName("new_password") val newPassword: String
 )
 
+// ─── Status / Updates ────────────────────────────────────────────────────────
+
+@Parcelize
+data class Status(
+    val id: Int = 0,
+    @SerializedName("user_id")     val userId: Int = 0,
+    val type: String = "text",
+    val content: String? = null,
+    @SerializedName("media_url")   val mediaUrl: String? = null,
+    @SerializedName("bg_color")    val bgColor: String = "#1D9E75",
+    @SerializedName("created_at")  val createdAt: Long = 0,
+    @SerializedName("expires_at")  val expiresAt: Long = 0,
+    @SerializedName("view_count")  val viewCount: Int = 0,
+    @SerializedName("viewed_by_me") val viewedByMe: Boolean = false
+) : Parcelable
+
+@Parcelize
+data class UserStatuses(
+    @SerializedName("user_id")    val userId: Int = 0,
+    @SerializedName("user_name")  val userName: String = "",
+    @SerializedName("user_avatar") val userAvatar: String? = null,
+    val statuses: List<Status> = emptyList(),
+    @SerializedName("has_unviewed") val hasUnviewed: Boolean = false,
+    @SerializedName("is_mine")    val isMine: Boolean = false
+) : Parcelable
+
+data class StatusListResponse(
+    val success: Boolean,
+    val updates: List<UserStatuses>
+)
+
 // ─── WebSocket Payloads ───────────────────────────────────────────────────────
 
 data class SendMessagePayload(

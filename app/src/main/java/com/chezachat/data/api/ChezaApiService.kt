@@ -122,6 +122,28 @@ interface ChezaApiService {
     @POST("friends/remove.php")
     suspend fun removeFriend(@Body body: Map<String, Int>): Response<ApiResponse<Unit>>
 
+    // ── Status Updates ────────────────────────────────────────────────────────
+
+    @GET("statuses/list.php")
+    suspend fun getStatuses(): Response<StatusListResponse>
+
+    @POST("statuses/create.php")
+    suspend fun createStatus(@Body body: Map<String, String>): Response<ApiResponse<Map<String, Any>>>
+
+    @POST("statuses/view.php")
+    suspend fun viewStatus(@Body body: Map<String, Int>): Response<ApiResponse<Unit>>
+
+    @POST("statuses/delete.php")
+    suspend fun deleteStatus(@Body body: Map<String, Int>): Response<ApiResponse<Unit>>
+
+    @Multipart
+    @POST("media/upload.php")
+    suspend fun uploadStatusMedia(
+        @Part file: MultipartBody.Part,
+        @Part("type") type: RequestBody,
+        @Part("conversation_id") convId: RequestBody
+    ): Response<ApiResponse<Map<String, String>>>
+
     // ── Forgot / Reset Password ───────────────────────────────────────────────
 
     @POST("auth/forgot_password.php")
