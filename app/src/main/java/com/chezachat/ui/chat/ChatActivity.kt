@@ -222,6 +222,7 @@ class ChatActivity : AppCompatActivity() {
                     when (event) {
                         is ChatEvent.ShowError      -> toast(event.message)
                         is ChatEvent.ScrollToBottom -> scrollToBottom()
+                        is ChatEvent.NavigateBack   -> finish()
                         else -> {}
                     }
                 }

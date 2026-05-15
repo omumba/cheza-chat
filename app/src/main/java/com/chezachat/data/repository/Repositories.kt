@@ -93,6 +93,8 @@ class ConversationRepository(private val db: ChezaDatabase) {
             if (response.isSuccessful) {
                 val list = response.body()?.conversations ?: emptyList()
                 dao.insertAll(list)
+                if (list.isEmpty()) dao.deleteAll()
+                else dao.deleteNotIn(list.map { it.id })
                 Result.Success(list)
             } else {
                 Result.Error("Failed to load conversations")
@@ -101,6 +103,8 @@ class ConversationRepository(private val db: ChezaDatabase) {
             Result.Error(e.message ?: "Network error")
         }
     }
+
+    suspend fun deleteConversation(convId: Int) = dao.delete(convId)
 
     suspend fun createDirectConversation(userId: Int): Result<Conversation> {
         return try {
@@ -161,7 +165,7 @@ class MessageRepository(private val db: ChezaDatabase) {
                 messageDao.insertAll(messages)
                 Result.Success(messages)
             } else {
-                Result.Error("Failed to load messages")
+                Result.Error("Failed to load messages", response.code())
             }
         } catch (e: Exception) {
             Result.Error(e.message ?: "Network error")

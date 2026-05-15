@@ -48,6 +48,12 @@ interface ConversationDao {
 
     @Query("DELETE FROM conversations WHERE id = :id")
     suspend fun delete(id: Int)
+
+    @Query("DELETE FROM conversations WHERE id NOT IN (:ids)")
+    suspend fun deleteNotIn(ids: List<Int>)
+
+    @Query("DELETE FROM conversations")
+    suspend fun deleteAll()
 }
 
 // ─── MessageDao ───────────────────────────────────────────────────────────────

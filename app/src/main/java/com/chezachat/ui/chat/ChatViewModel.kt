@@ -82,7 +82,14 @@ class ChatViewModel(
             _isLoadingMore.value = page > 1
             when (val r = messageRepo.loadMessages(conversationId, page)) {
                 is Result.Success -> { hasMorePages = r.data.size >= 50; currentPage = page }
-                is Result.Error   -> _event.emit(ChatEvent.ShowError(r.message))
+                is Result.Error   -> {
+                    if (r.code == 403) {
+                        convRepo.deleteConversation(conversationId)
+                        _event.emit(ChatEvent.NavigateBack)
+                    } else {
+                        _event.emit(ChatEvent.ShowError(r.message))
+                    }
+                }
                 else -> {}
             }
             _isLoadingMore.value = false
@@ -239,4 +246,5 @@ sealed class ChatEvent {
     data class ShowError(val message: String) : ChatEvent()
     object ScrollToBottom : ChatEvent()
     object MessageSent    : ChatEvent()
+    object NavigateBack   : ChatEvent()
 }
