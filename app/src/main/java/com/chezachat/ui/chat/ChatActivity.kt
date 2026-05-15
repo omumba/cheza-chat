@@ -62,7 +62,7 @@ class ChatActivity : AppCompatActivity() {
     // ── File pickers ──────────────────────────────────────────────────────────
     private val pickImageLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
-    ) { uri: Uri? -> uri?.let { uploadAndSend(it, "image") } }
+    ) { uri: Uri? -> uri?.let { showImagePreview(it) } }
 
     private val pickVideoLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
@@ -272,6 +272,24 @@ class ChatActivity : AppCompatActivity() {
             pendingPickAction = launch
             permissionLauncher.launch(denied.toTypedArray())
         }
+    }
+
+    // ── Image preview ─────────────────────────────────────────────────────────
+    private fun showImagePreview(uri: Uri) {
+        val imageView = android.widget.ImageView(this).apply {
+            layoutParams = android.view.ViewGroup.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT, 600
+            )
+            scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+            setPadding(8, 8, 8, 8)
+        }
+        com.bumptech.glide.Glide.with(this).load(uri).centerCrop().into(imageView)
+        AlertDialog.Builder(this)
+            .setTitle("Send image?")
+            .setView(imageView)
+            .setPositiveButton("Send") { _, _ -> uploadAndSend(uri, "image") }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     // ── Upload ────────────────────────────────────────────────────────────────

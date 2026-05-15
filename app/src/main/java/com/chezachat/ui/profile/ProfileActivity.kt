@@ -12,6 +12,7 @@ import com.chezachat.R
 import com.chezachat.data.api.RetrofitClient
 import com.chezachat.databinding.ActivityProfileBinding
 import com.chezachat.ui.auth.AuthActivity
+import com.chezachat.ui.chat.ImageViewerActivity
 import com.chezachat.utils.*
 
 class ProfileActivity : AppCompatActivity() {
@@ -56,7 +57,18 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        binding.ivAvatar.setOnClickListener { pickAvatarLauncher.launch("image/*") }
+        binding.ivAvatar.setOnClickListener {
+            val currentUrl = session.getUser()?.avatarUrl
+            if (currentUrl != null) {
+                AlertDialog.Builder(this)
+                    .setItems(arrayOf("View photo", "Change photo")) { _, which ->
+                        if (which == 0) ImageViewerActivity.start(this, currentUrl)
+                        else pickAvatarLauncher.launch("image/*")
+                    }.show()
+            } else {
+                pickAvatarLauncher.launch("image/*")
+            }
+        }
         binding.btnEditAvatar.setOnClickListener { pickAvatarLauncher.launch("image/*") }
 
         binding.btnSaveStatus.setOnClickListener {

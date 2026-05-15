@@ -15,6 +15,7 @@ import com.chezachat.data.repository.FriendRepository
 import com.chezachat.data.repository.Result
 import com.chezachat.model.User
 import com.chezachat.ui.chat.ChatActivity
+import com.chezachat.ui.chat.ImageViewerActivity
 import com.chezachat.utils.*
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.Dispatchers
@@ -142,6 +143,10 @@ class UserProfileActivity : AppCompatActivity() {
 
     private fun bindUser() {
         ivAvatar.loadAvatar(user.avatarUrl)
+        ivAvatar.setOnClickListener {
+            val url = user.avatarUrl ?: return@setOnClickListener
+            ImageViewerActivity.start(this, url)
+        }
         tvName.text = user.name
         tvStatus.text = user.status?.takeIf { it.isNotBlank() } ?: "Hey there! I'm using Cheza Chat"
         tvEmail.text = user.email

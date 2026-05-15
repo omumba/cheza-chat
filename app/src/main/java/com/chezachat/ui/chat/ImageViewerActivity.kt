@@ -62,6 +62,11 @@ class ImageViewerActivity : AppCompatActivity() {
                 View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         }
 
+        if (imageUrl.isNullOrBlank()) {
+            toast("No image available")
+            finish()
+            return
+        }
         loadImage()
         binding.btnDownload.setOnClickListener { downloadImage() }
     }
